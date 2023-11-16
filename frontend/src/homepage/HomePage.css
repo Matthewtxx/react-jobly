@@ -1,0 +1,16 @@
+/* Homepage.css */
+
+.homepage-container {
+  text-align: center;
+  margin: 50px;
+}
+
+.homepage-heading {
+  font-size: 2.5em;
+  color: #333;
+}
+
+.homepage-description {
+  font-size: 1.2em;
+  color: #666;
+}
