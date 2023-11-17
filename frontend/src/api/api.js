@@ -13,26 +13,28 @@ class JoblyApi {
     const params = (method === "get") ? data : {};
 
     try {
-      return (await axios({ url, method, data, params, headers })).data;
+      const response = await axios({ url, method, data, params, headers });
+      console.debug("API Response:", response);
+      return response.data;
     } catch (err) {
-      console.error("API Error:", err.response);
-      let message = err.response.data.error.message;
+      console.error("API Error:", err);
+      let message = err.response?.data?.error?.message || "Unknown error";
       throw Array.isArray(message) ? message : [message];
     }
   }
 
   // Individual API routes
 
-  static async getCompany(handle) {
-    let res = await this.request(`companies/${handle}`);
-    return res.company;
+  static async getCompanies(searchTerm = "") {
+    // Use the search term to make a request to the backend API
+    const res = await this.request("companies", { search: searchTerm });
+    return res.companies;
   }
-
    
-  static async getJob(jobId) {
-    let res = await this.request(`jobs/${jobId}`);
-     return res.job;
-   }
+  static async getJobs() {
+    let res = await this.request(`jobs`);
+    return res.jobs;
+  }
 
   static async applyToJob(jobId) {
      let res = await this.request(`jobs/${jobId}/apply`, {}, "post");
