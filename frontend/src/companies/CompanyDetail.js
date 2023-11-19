@@ -1,27 +1,33 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom"; // Import useParams
 import JoblyApi from "../api/api";
+import './CompanyDetail.css'
 
-const CompanyDetail = ({ match }) => {
+const CompanyDetail = () => {
+  const { handle } = useParams(); 
   const [company, setCompany] = useState(null);
 
   useEffect(() => {
     const fetchCompany = async () => {
-      const companyData = await JoblyApi.getCompany(match.params.handle);
-      setCompany(companyData);
+      try {
+        const companyData = await JoblyApi.getCompany(handle);
+        setCompany(companyData);
+      } catch (error) {
+        console.error('Error fetching company:', error);
+      }
     };
 
     fetchCompany();
-  }, [match.params.handle]);
+  }, [handle]); 
 
   if (!company) {
     return <p>Loading...</p>;
   }
 
   return (
-    <div>
-      <h2>{company.name}</h2>
-      <p>{company.description}</p>
-      {/* Add more company details as needed */}
+    <div className="company-detail">
+      <h2 className="company-name">{company.name}</h2>
+      <p className="company-description">{company.description}</p>
     </div>
   );
 };

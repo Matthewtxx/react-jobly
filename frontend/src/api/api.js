@@ -25,10 +25,15 @@ class JoblyApi {
 
   // Individual API routes
 
-  static async getCompanies(searchTerm = "") {
-    // Use the search term to make a request to the backend API
-    const res = await this.request("companies", { search: searchTerm });
+  static async searchCompanies(searchTerm) {
+    const queryParams = searchTerm ? { search: searchTerm } : {};
+    const res = await this.request("companies", queryParams);
     return res.companies;
+  }
+
+  static async getCompany(handle) {
+    const res = await this.request(`companies/${handle}`);
+    return res.company;
   }
    
   static async getJobs() {

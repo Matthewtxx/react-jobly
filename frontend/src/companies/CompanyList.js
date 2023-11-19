@@ -11,7 +11,9 @@ const CompanyList = () => {
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const companies = await JoblyApi.getCompanies();
+        const companies = await (searchTerm
+          ? JoblyApi.searchCompanies(searchTerm)
+          : JoblyApi.getCompanies());
         setCompanies(companies);
       } catch (error) {
         console.error('Error fetching companies:', error);
