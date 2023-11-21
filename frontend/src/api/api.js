@@ -31,14 +31,27 @@ class JoblyApi {
     return res.companies;
   }
 
-  static async getCompany(handle) {
-    const res = await this.request(`companies/${handle}`);
-    return res.company;
-  }
+  static async getCompany() {
+    const res = await this.request("companies");
+    return res.companies;
+  }  
    
   static async getJobs() {
     let res = await this.request(`jobs`);
     return res.jobs;
+  }
+
+  static async register(data) {
+    const res = await this.request("users/register", data, "post");
+    return res.token;
+  }
+  
+  static async login(username, password) {
+    const res = await axios.post(`${BASE_URL}/users/token`, {
+      username,
+      password
+    });
+    return res.data.token;
   }
 
   static async applyToJob(jobId) {

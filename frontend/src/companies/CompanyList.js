@@ -13,7 +13,7 @@ const CompanyList = () => {
       try {
         const companies = await (searchTerm
           ? JoblyApi.searchCompanies(searchTerm)
-          : JoblyApi.getCompanies());
+          : JoblyApi.getCompany());
         setCompanies(companies);
       } catch (error) {
         console.error('Error fetching companies:', error);

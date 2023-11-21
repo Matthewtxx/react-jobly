@@ -21,8 +21,8 @@ const AppRoutes = () => {
         <Route path="/companies" element={<CompanyList />} />
         <Route path="/companies/:handle" element={<CompanyDetail />} />
         <Route path="/jobs" element={<JobList />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/signup" element={<SignupForm />} />
+        <Route path="/users/login" element={<LoginForm />} />
+        <Route path="/users/signup" element={<SignupForm />} />
         <Route path="/profile" element={<ProfileForm />} />
         {/* Redirect to homepage if no matching route */}
         <Route path="*" element={<Navigate to="/" />} />

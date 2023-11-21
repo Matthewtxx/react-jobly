@@ -1,8 +1,7 @@
 // CompanyCard.js
-// CompanyCard.js
 import React from "react";
 import { Link } from "react-router-dom";
-import "./CompanyCard.css"; // Import the CSS file
+import "./CompanyCard.css";
 
 const CompanyCard = ({ company }) => {
   return (
