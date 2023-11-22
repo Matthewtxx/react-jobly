@@ -1,52 +1,64 @@
 import React, { useState } from "react";
-import JoblyApi from "../api/api";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/AuthProvider";
 import './Form.css';
 
-const LoginForm = ({ setToken }) => {
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-  });
+const LoginForm = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData((data) => ({ ...data, [e.target.name]: e.target.value }));
-  };
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
-      const token = await JoblyApi.login(formData.username, formData.password);
-      setToken(token);
+      await login(formData.username, formData.password);
+      // Redirect or perform additional actions after successful login
+      navigate('/');
     } catch (error) {
-      console.error("Login error:", error);
-      // Handle login error (display a message, etc.)
+      console.error("Login failed:", error);
+      // Handle login failure, e.g., display an error message
     }
   };
 
   return (
-    <div className="form-container">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Username:
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Password:
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-        </label>
-        <button type="submit">Login</button>
-      </form>
+    <div className="auth-container">
+      <div className="form-container">
+        <h2>Login</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <input
+              name="username"
+              type="text"
+              placeholder="Enter Username"
+              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+              className="form-control"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              name="password"
+              type="password"
+              placeholder="Enter Password"
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              className="form-control"
+            />
+          </div>
+          <button type="submit" className="btn btn-success btn-submit">
+            Login
+          </button>
+          <br />
+          <Link to="/users/signup" className="btn btn-default btn-link">
+            Create Account
+          </Link>
+        </form>
+      </div>
     </div>
   );
 };

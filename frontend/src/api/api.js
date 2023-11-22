@@ -5,6 +5,11 @@ const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3001";
 class JoblyApi {
   static token;
 
+  // Set authentication token
+  static setToken(token) {
+    JoblyApi.token = token;
+  }
+
   static async request(endpoint, data = {}, method = "get") {
     console.debug("API Call:", endpoint, data, method);
 
@@ -42,15 +47,16 @@ class JoblyApi {
   }
 
   static async register(data) {
-    const res = await this.request("users/register", data, "post");
+    const res = await this.request("auth/users/register", data, "post");
     return res.token;
   }
   
   static async login(username, password) {
-    const res = await axios.post(`${BASE_URL}/users/token`, {
+    const res = await axios.post(`${BASE_URL}/auth/token`, {
       username,
       password
     });
+    JoblyApi.token = res.data.token;
     return res.data.token;
   }
 
@@ -64,6 +70,7 @@ class JoblyApi {
     return res.user;
   }
 
+  
   // Update token if authentication is implemented
   static updateToken(newToken) {
     JoblyApi.token = newToken;

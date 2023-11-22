@@ -1,5 +1,7 @@
+//Routes.js
 import React from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
+import { AuthProvider } from "../hooks/AuthProvider";
 import Homepage from "../homepage/HomePage";
 import CompanyList from "../companies/CompanyList";
 import CompanyDetail from "../companies/CompanyDetail";
@@ -9,11 +11,11 @@ import SignupForm from "../auth/SignupForm";
 import ProfileForm from "../profiles/ProfileForm";
 import Navigation from "./Navigation";
 
-const AppRoutes = () => {
+const AppRoutes = ({ token, login, signup, logout, currentUser }) => {
   return (
     <div>
       {/* Navigation Bar */}
-      <Navigation />
+      <Navigation currentUser={currentUser} logout={logout} />
 
       {/* Routes */}
       <Routes>
@@ -21,9 +23,10 @@ const AppRoutes = () => {
         <Route path="/companies" element={<CompanyList />} />
         <Route path="/companies/:handle" element={<CompanyDetail />} />
         <Route path="/jobs" element={<JobList />} />
-        <Route path="/users/login" element={<LoginForm />} />
-        <Route path="/users/signup" element={<SignupForm />} />
-        <Route path="/profile" element={<ProfileForm />} />
+        <Route path="/users/login" element={<LoginForm login={login} />} />
+        <Route path="/users/signup" element={<SignupForm signup={signup} />} />
+        {/* PrivateRoute for authenticated user */}
+        <Route path="/profile" element={<ProfileForm />} token={token} />
         {/* Redirect to homepage if no matching route */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
