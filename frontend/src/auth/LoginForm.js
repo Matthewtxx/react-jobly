@@ -17,11 +17,9 @@ const LoginForm = () => {
     
     try {
       await login(formData.username, formData.password);
-      // Redirect or perform additional actions after successful login
       navigate('/');
     } catch (error) {
       console.error("Login failed:", error);
-      // Handle login failure, e.g., display an error message
     }
   };
 
@@ -33,7 +31,7 @@ const LoginForm = () => {
           <div className="form-group">
             <label htmlFor="username">Username</label>
             <input
-              name="username"
+              id="username"
               type="text"
               placeholder="Enter Username"
               onChange={(e) => setFormData({ ...formData, username: e.target.value })}
@@ -43,7 +41,7 @@ const LoginForm = () => {
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
-              name="password"
+              id="password"
               type="password"
               placeholder="Enter Password"
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}

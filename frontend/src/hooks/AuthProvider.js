@@ -10,7 +10,7 @@ const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [token, setToken] = useLocalStorage("token");
 
-  const isAuthenticated = !!currentUser;  // Add this line to define isAuthenticated
+  const isAuthenticated = !!currentUser;
 
   useEffect(() => {
     const fetchUserData = async () => {

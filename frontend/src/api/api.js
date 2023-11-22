@@ -52,12 +52,18 @@ class JoblyApi {
   }
   
   static async login(username, password) {
-    const res = await axios.post(`${BASE_URL}/auth/token`, {
-      username,
-      password
-    });
-    JoblyApi.token = res.data.token;
-    return res.data.token;
+    try {
+      const res = await axios.post(`${BASE_URL}/auth/token`, {
+        username,
+        password,
+      });
+      const token = res.data.token;
+      JoblyApi.setToken(token);
+      return token;
+    } catch (error) {
+      console.error("Login failed:", error);
+      throw error;
+    }
   }
 
   static async applyToJob(jobId) {
@@ -65,9 +71,14 @@ class JoblyApi {
     return res.message;
    }
 
-  static async getUserProfile() {
-     let res = await this.request("users/profile");
-    return res.user;
+   static async getUserProfile() {
+    try {
+      const res = await this.request("users/profile");
+      return res.user;
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      throw error;
+    }
   }
 
   
