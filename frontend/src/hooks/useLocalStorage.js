@@ -1,17 +1,36 @@
-// useLocalStorage.js
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const useLocalStorage = (key, initialValue = null) => {
-  const storedValue = localStorage.getItem(key);
-  const initial = storedValue ? JSON.parse(storedValue) : initialValue;
-  const [value, setValue] = useState(initial);
+/** Custom hook for keeping state data synced with localStorage.
+ *
+ * This creates `item` as state and look in localStorage for current value
+ * (if not found, defaults to `firstValue`)
+ *
+ * When `item` changes, effect re-runs:
+ * - if new state is null, removes from localStorage
+ * - else, updates localStorage
+ *
+ * To the component, this just acts like state that is also synced to/from
+ * localStorage::
+ *
+ *   const [myThing, setMyThing] = useLocalStorage("myThing")
+ */
 
-  const setStoredValue = (newValue) => {
-    setValue(newValue);
-    localStorage.setItem(key, JSON.stringify(newValue));
-  };
+function useLocalStorage(key, firstValue = null) {
+  const initialValue = localStorage.getItem(key) || firstValue;
 
-  return [value, setStoredValue];
-};
+  const [item, setItem] = useState(initialValue);
+
+  useEffect(function setKeyInLocalStorage() {
+    console.debug("hooks useLocalStorage useEffect", "item=", item);
+
+    if (item === null) {
+      localStorage.removeItem(key);
+    } else {
+      localStorage.setItem(key, item);
+    }
+  }, [key, item]);
+
+  return [item, setItem];
+}
 
 export default useLocalStorage;

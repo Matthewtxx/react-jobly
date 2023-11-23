@@ -1,20 +1,43 @@
-import React from 'react';
-import { useAuth } from '../hooks/AuthProvider';
-import './HomePage.css';
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
+import "./HomePage.css";
+import UserContext from "../auth/UserContext";
 
-const Homepage = () => {
-  const { isAuthenticated } = useAuth();
+/** Homepage of site.
+ *
+ * Shows welcome message or login/register buttons.
+ *
+ * Routed at /
+ *
+ * Routes -> Homepage
+ */
+
+function Homepage() {
+  const { currentUser } = useContext(UserContext);
+  console.debug("Homepage", "currentUser=", currentUser);
 
   return (
-    <div className="homepage-container">
-      <h1 className="homepage-heading">Welcome to Jobly!</h1>
-      <p className="homepage-description">
-        {isAuthenticated
-          ? 'Find the job that suits you best. Explore companies and job opportunities.'
-          : 'Please log in or sign up to explore job opportunities.'}
-      </p>
+    <div className="Homepage text-center">
+      <div className="container">
+        <h1 className="mb-4 fw-bold">Jobly</h1>
+        <p className="lead">All the jobs in one, convenient place.</p>
+        {currentUser ? (
+          <h2>
+            Welcome Back, {currentUser.firstName || currentUser.username}!
+          </h2>
+        ) : (
+          <p>
+            <Link className="btn btn-primary fw-bold me-3" to="/login">
+              Log in
+            </Link>
+            <Link className="btn btn btn-primary fw-bold" to="/signup">
+              Sign up
+            </Link>
+          </p>
+        )}
+      </div>
     </div>
   );
-};
+}
 
 export default Homepage;

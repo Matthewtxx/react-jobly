@@ -1,68 +1,68 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+// Navigation.js
+
+import React, { useContext } from "react";
+import { Link, NavLink } from "react-router-dom";
+import UserContext from "../auth/UserContext";
 import "./Navigation.css";
-import { useAuth } from "../hooks/AuthProvider";
 
-const Navigation = () => {
-  const { isAuthenticated, currentUser, logout } = useAuth();
-  const navigate = useNavigate();
+function Navigation({ logout }) {
+  const { currentUser } = useContext(UserContext);
+  console.debug("Navigation", "currentUser=", currentUser);
 
-  console.log("isAuthenticated:", isAuthenticated);
+  function loggedInNav() {
+    return (
+      <ul className="nav-list">
+        <li className="nav-item">
+          <NavLink className="nav-link" to="/companies">
+            Companies
+          </NavLink>
+        </li>
+        <li className="nav-item">
+          <NavLink className="nav-link" to="/jobs">
+            Jobs
+          </NavLink>
+        </li>
+        <li className="nav-item">
+          <NavLink className="nav-link" to="/profile">
+            Profile
+          </NavLink>
+        </li>
+        <li className="nav-item">
+          <Link className="nav-link nav-link-logout" to="/" onClick={logout}>
+            Log out {currentUser.first_name || currentUser.username}
+          </Link>
+        </li>
+      </ul>
+    );
+  }
+
+  function loggedOutNav() {
+    return (
+      <ul className="nav-list">
+        <li className="nav-item">
+          <NavLink className="nav-link" to="/login">
+            Login
+          </NavLink>
+        </li>
+        <li className="nav-item">
+          <NavLink className="nav-link" to="/signup">
+            Sign Up
+          </NavLink>
+        </li>
+      </ul>
+    );
+  }
 
   return (
     <nav className="navbar">
+      <Link className="navbar-brand-jobly" to="/">
+        Jobly
+      </Link>
       <ul className="nav-list">
-        <li className="nav-item">
-          <Link to="/" className="nav-link">
-            Home
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/companies" className="nav-link">
-            Companies
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/jobs" className="nav-link">
-            Jobs
-          </Link>
-        </li>
-        {isAuthenticated ? (
-          <>
-            <li className="nav-item">
-              <Link to="/profile" className="nav-link">
-                Profile
-              </Link>
-            </li>
-            <li className="nav-item">
-              <span className="nav-link">Welcome, {currentUser.username}!</span>
-            </li>
-            <li className="nav-item">
-              <button onClick={async () => {
-                await logout();
-                navigate("/");
-              }} className="nav-link">
-                Logout
-              </button>
-            </li>
-          </>
-        ) : (
-          <>
-            <li className="nav-item">
-              <Link to="/users/login" className="nav-link">
-                Login
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/users/signup" className="nav-link">
-                Signup
-              </Link>
-            </li>
-          </>
-        )}
+        {currentUser ? loggedInNav() : loggedOutNav()}
       </ul>
     </nav>
   );
-};
+}
 
 export default Navigation;

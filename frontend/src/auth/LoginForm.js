@@ -1,64 +1,81 @@
+// LoginForm.js
+
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/AuthProvider";
-import './Form.css';
+import Alert from "../common/Alert";
+import "./AuthForm.css";
+import { useNavigate } from "react-router-dom";
 
-const LoginForm = () => {
-  const { login } = useAuth();
+function LoginForm({ login }) {
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
+    username: "",
+    password: "",
   });
+  const [formErrors, setFormErrors] = useState([]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
+  /** Handle form submit */
+  async function handleSubmit(evt) {
+    evt.preventDefault();
     try {
-      await login(formData.username, formData.password);
-      navigate('/');
-    } catch (error) {
-      console.error("Login failed:", error);
+      await login(formData);
+      navigate("/companies");
+    } catch (err) {
+      setFormErrors(err);
     }
-  };
+  }
+
+  /** Update form data field */
+  function handleChange(evt) {
+    const { name, value } = evt.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  }
 
   return (
-    <div className="auth-container">
-      <div className="form-container">
-        <h2>Login</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <input
-              id="username"
-              type="text"
-              placeholder="Enter Username"
-              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-              className="form-control"
-            />
+    <div className="AuthForm">
+      <div className="Formcontainer container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
+        <h3 className="mb-3">Log In</h3>
+        <div className="card">
+          <div className="card-body">
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label className="form-label">Username</label>
+                <input
+                  name="username"
+                  className="form-control form-input"
+                  value={formData.username}
+                  onChange={handleChange}
+                  autoComplete="username"
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  className="form-control form-input"
+                  value={formData.password}
+                  onChange={handleChange}
+                  autoComplete="current-password"
+                  required
+                />
+              </div>
+
+              {formErrors.length ? (
+                <Alert type="danger" messages={formErrors} />
+              ) : null}
+
+              <div className="d-grid">
+                <button className="btn btn-primary form-btn" onClick={handleSubmit}>
+                  Submit
+                </button>
+              </div>
+            </form>
           </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              placeholder="Enter Password"
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="form-control"
-            />
-          </div>
-          <button type="submit" className="btn btn-success btn-submit">
-            Login
-          </button>
-          <br />
-          <Link to="/users/signup" className="btn btn-default btn-link">
-            Create Account
-          </Link>
-        </form>
+        </div>
       </div>
     </div>
   );
-};
+}
 
 export default LoginForm;

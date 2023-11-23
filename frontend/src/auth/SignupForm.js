@@ -1,115 +1,125 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/AuthProvider";
-import './Form.css';
+import Alert from "../common/Alert";
+import "./AuthForm.css";
+import { useNavigate } from "react-router-dom";
 
-function SignupForm() {
-  const { signup } = useAuth();
+/** Signup form.
+ *
+ * Shows form and manages update to state on changes.
+ * On submission:
+ * - calls signup function prop
+ *
+ * Routes -> SignupForm -> Alert
+ * Routed as /signup
+ */
+
+function SignupForm({ signup }) {
   const navigate = useNavigate();
-
-  const [values, setValues] = useState({
+  const [formData, setFormData] = useState({
     username: "",
-    email: "",
     password: "",
     firstName: "",
     lastName: "",
+    email: "",
   });
+  const [formErrors, setFormErrors] = useState([]);
 
-  const handleInput = (e) => {
-    setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
+  console.debug(
+    "SignupForm",
+    "signup=", typeof signup,
+    "formData=", formData,
+    "formErrors=", formErrors,
+  );
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
+  /** Handle form submit:
+   *
+   * Calls login func prop and, if not successful, sets errors.
+   */
+  async function handleSubmit(evt) {
+    evt.preventDefault();
     try {
-      // Call the signup function from the AuthProvider
-      await signup(values);
-  
-      // Redirect to login page after successful signup
-      navigate("/users/login");
-    } catch (error) {
-      console.error("Signup error:", error.message);
-  
-      // Check if it's a duplicate username error
-      if (error.message.includes("Duplicate username")) {
-        // Handle duplicate username error
-        console.error("Duplicate username error:", error.message);
-      } else {
-        // Handle other errors 
-        console.error("Other signup error:", error.message);
-      }
+      await signup(formData);
+      navigate("/companies")
+    } catch (err) {
+      setFormErrors(err);
     }
-  };
+  }
+
+  /** Update form data field */
+  function handleChange(evt) {
+    const { name, value } = evt.target;
+    setFormData(data => ({ ...data, [name]: value }));
+  }
 
   return (
-    <div className="auth-container">
-      <div className="form-container">
-        <h2>Signup</h2>
-        <form onSubmit={handleSubmit}>
-          {/** username */}
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <input
-              name="username"
-              type="text"
-              placeholder="Enter Username"
-              onChange={handleInput}
-              className="form-control"
-            />
+    <div className="AuthForm">
+      <div className="Formcontainer container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
+        <h2 className="mb-3">Sign Up</h2>
+        <div className="card">
+          <div className="card-body">
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label className="form-label">Username</label>
+                <input
+                  name="username"
+                  className="form-control"
+                  value={formData.username}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  className="form-control"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">First name</label>
+                <input
+                  name="firstName"
+                  className="form-control"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Last name</label>
+                <input
+                  name="lastName"
+                  className="form-control"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  className="form-control"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
+
+              {formErrors.length
+                ? <Alert type="danger" messages={formErrors} />
+                : null
+              }
+
+              <div className="d-grid">
+                <button className="btn btn-primary" onClick={handleSubmit}>
+                  Submit
+                </button>
+              </div>
+            </form>
           </div>
-          {/** email */}
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              name="email"
-              type="email"
-              placeholder="Enter Email"
-              onChange={handleInput}
-              className="form-control"
-            />
-          </div>
-          {/** password */}
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              name="password"
-              type="password"
-              placeholder="Enter Password"
-              onChange={handleInput}
-              className="form-control"
-            />
-          </div>
-          {/** firstName */}
-          <div className="form-group">
-            <label htmlFor="firstName">First Name</label>
-            <input
-              name="firstName"
-              type="text"
-              placeholder="Enter First Name"
-              onChange={handleInput}
-              className="form-control"
-            />
-          </div>
-          {/** lastName */}
-          <div className="form-group">
-            <label htmlFor="lastName">Last Name</label>
-            <input
-              name="lastName"
-              type="text"
-              placeholder="Enter Last Name"
-              onChange={handleInput}
-              className="form-control"
-            />
-          </div>
-          <button type="submit" className="btn btn-success btn-submit">
-            Signup
-          </button>
-          <br />
-          <Link to="/users/login" className="btn btn-default btn-link">
-            Already have an account?
-          </Link>
-        </form>
+        </div>
       </div>
     </div>
   );
